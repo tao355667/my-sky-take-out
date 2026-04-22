@@ -68,46 +68,7 @@ npm run build
 brew install nginx
 ```
 
-1. 配置 Nginx（采用项目内 `nginx.conf`，端口保持 `8889`）
-
-```nginx
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    '' close;
-}
-
-upstream webservers {
-    server 127.0.0.1:8080 weight=90;
-}
-
-server {
-    listen       8889;
-    server_name  localhost;
-
-    root   /Users/xct/code/my-sky-take-out/project-sky-admin-vue-ts/dist;
-    index  index.html index.htm;
-
-    location /api/ {
-        proxy_pass   http://localhost:8080/admin/;
-    }
-
-    location /user/ {
-        proxy_pass   http://webservers/user/;
-    }
-
-    location /ws/ {
-        proxy_pass   http://webservers/ws/;
-        proxy_http_version 1.1;
-        proxy_read_timeout 3600s;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "$connection_upgrade";
-    }
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-}
-```
+1. 配置 Nginx（直接使用项目内 `nginx.conf`）
 
 1. 应用配置（推荐直接覆盖本地 Nginx 主配置）
 
@@ -115,10 +76,8 @@ server {
 cp ./project-sky-admin-vue-ts/nginx.conf /opt/homebrew/etc/nginx/nginx.conf
 ```
 
-然后把 `server` 中两处按本机改好：
-
-- `listen 80;` 改为 `listen 8889;`
-- `root html/sky;` 改为 `root /Users/xct/code/my-sky-take-out/project-sky-admin-vue-ts/dist;`
+若你本机路径不同，只需把 `root` 改成你自己的 `dist` 绝对路径。
+端口默认使用 `nginx.conf` 里的 `listen 80;`，如需改端口再自行调整 `listen`。
 
 1. 检查并重启 Nginx
 
@@ -129,7 +88,7 @@ brew services restart nginx
 
 1. 打开页面
 
-- `http://localhost:8889`
+- `http://localhost`
 
 1. 确保后端服务已启动（例如 `http://127.0.0.1:8080/admin`）
 
