@@ -13,7 +13,6 @@
 - Node.js：项目实测可用 `v12.22.12`
 - npm：随 Node 安装
 
-
 ---
 
 ## 1. 方案 A：跑通单体项目（开发模式）
@@ -25,19 +24,19 @@
 
 ### 步骤
 
-1) 安装依赖
+1. 安装依赖
 
 ```bash
 npm install
 ```
 
-2) 启动开发服务器
+1. 启动开发服务器
 
 ```bash
 npm run serve
 ```
 
-3) 在浏览器打开终端提示地址（通常是 `http://localhost:8080`）
+1. 在浏览器打开终端提示地址（通常是 `http://localhost:8080`）
 
 ### 说明
 
@@ -55,7 +54,7 @@ npm run serve
 
 ### 步骤
 
-1) 打包前端
+1. 打包前端
 
 ```bash
 npm run build
@@ -63,28 +62,45 @@ npm run build
 
 打包后会生成 `dist/` 目录。
 
-2) 安装 Nginx（Mac）
+1. 安装 Nginx（Mac）
 
 ```bash
 brew install nginx
 ```
 
-3) 配置 Nginx（示例）
+1. 配置 Nginx（采用项目内 `nginx.conf`，端口保持 `8889`）
 
 ```nginx
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+upstream webservers {
+    server 127.0.0.1:8080 weight=90;
+}
+
 server {
     listen       8889;
     server_name  localhost;
 
     root   /Users/xct/code/my-sky-take-out/project-sky-admin-vue-ts/dist;
-    index  index.html;
+    index  index.html index.htm;
 
     location /api/ {
-        proxy_pass http://127.0.0.1:8080/admin/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass   http://localhost:8080/admin/;
+    }
+
+    location /user/ {
+        proxy_pass   http://webservers/user/;
+    }
+
+    location /ws/ {
+        proxy_pass   http://webservers/ws/;
+        proxy_http_version 1.1;
+        proxy_read_timeout 3600s;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "$connection_upgrade";
     }
 
     location / {
@@ -93,18 +109,29 @@ server {
 }
 ```
 
-4) 检查并重启 Nginx
+1. 应用配置（推荐直接覆盖本地 Nginx 主配置）
+
+```bash
+cp ./project-sky-admin-vue-ts/nginx.conf /opt/homebrew/etc/nginx/nginx.conf
+```
+
+然后把 `server` 中两处按本机改好：
+
+- `listen 80;` 改为 `listen 8889;`
+- `root html/sky;` 改为 `root /Users/xct/code/my-sky-take-out/project-sky-admin-vue-ts/dist;`
+
+1. 检查并重启 Nginx
 
 ```bash
 nginx -t
 brew services restart nginx
 ```
 
-5) 打开页面
+1. 打开页面
 
 - `http://localhost:8889`
 
-6) 确保后端服务已启动（例如 `http://127.0.0.1:8080/admin`）
+1. 确保后端服务已启动（例如 `http://127.0.0.1:8080/admin`）
 
 ---
 
@@ -131,7 +158,7 @@ brew services restart nginx
 
 ### 3.2 部署步骤（生产环境）
 
-1) 安装依赖（首次或依赖变化时）
+1. 安装依赖（首次或依赖变化时）
 
 ```bash
 npm install
@@ -143,7 +170,7 @@ npm install
 CYPRESS_INSTALL_BINARY=0 npm install
 ```
 
-2) 构建前端产物（生产）
+1. 构建前端产物（生产）
 
 ```bash
 npm run build
@@ -151,23 +178,23 @@ npm run build
 
 执行后应生成 `dist/` 目录。
 
-3) 在项目根目录构建镜像
+1. 在项目根目录构建镜像
 
 ```bash
 docker build -t sky-admin:prod .
 ```
 
-4) 运行容器（将容器 80 端口映射到宿主机 8889）
+1. 运行容器（将容器 80 端口映射到宿主机 8889）
 
 ```bash
 docker run -d --name sky-admin -p 8889:80 --restart unless-stopped sky-admin:prod
 ```
 
-5) 访问页面
+1. 访问页面
 
 - `http://localhost:8889`
 
-6) 常用运维命令
+1. 常用运维命令
 
 ```bash
 docker ps
@@ -259,3 +286,4 @@ npm run build
 docker build -t sky-admin:prod .
 docker run -d --name sky-admin -p 8889:80 --restart unless-stopped sky-admin:prod
 ```
+
