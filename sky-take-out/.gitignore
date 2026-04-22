@@ -1,0 +1,70 @@
+# Java/Maven build outputs
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.iml
+*.ipr
+*.iws
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Dependency directories (if any)
+node_modules/
+jspm_packages/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.bak
+.project
+.classpath
+.settings/
+bin/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# macOS temporary files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# System files
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+__MACOSX/
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# Coverage reports (if any)
+coverage/
+*.lcov
+
+# Package locks (if any)
+package-lock.json
+yarn.lock

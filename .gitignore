@@ -1,0 +1,43 @@
+# macOS temporary files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# macOS resource forks
+__MACOSX/
+
+# System files
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.DocumentRevisions-V100
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.bak
+*.backup
+*.save
+*.orig
+*.rej
+*.un~
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# Miscellaneous
+*.log
+*.pid
